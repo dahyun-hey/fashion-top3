@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>패션 TOP3 - 무신사 / 지그재그 실시간 인기 순위</title>
+<meta name="description" content="무신사, 지그재그 실시간 인기 TOP3 아이템을 한눈에!">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Noto Sans KR',sans-serif;background:#f5f5f7;color:#1d1d1f;min-height:100vh}
+  header{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;text-align:center;padding:28px 20px 22px;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.15)}
+  header h1{font-size:26px;font-weight:900;letter-spacing:-.5px}
+  header h1 span{color:#e94560}
+  header p{font-size:13px;color:rgba(255,255,255,.6);margin-top:6px}
+  #updateTime{font-size:12px;color:rgba(255,255,255,.45);margin-top:4px}
+  .tab-bar{display:flex;background:#fff;border-bottom:1px solid #e0e0e0;position:sticky;top:96px;z-index:99}
+  .tab{flex:1;text-align:center;padding:14px 0;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;color:#888}
+  .tab:hover{color:#333}
+  .tab.active{border-bottom-color:#e94560;color:#1d1d1f}
+  .tab .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .content{max-width:600px;margin:0 auto;padding:16px}
+  .platform-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .platform-logo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:#fff}
+  .platform-header h2{font-size:20px;font-weight:700}
+  .badge{background:#e94560;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;margin-left:auto}
+  .item-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:transform .15s,box-shadow .15s;cursor:pointer;text-decoration:none;color:inherit}
+  .item-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+  .rank{font-size:28px;font-weight:900;min-width:36px;text-align:center}
+  .rank-1{color:#ffd700}.rank-2{color:#c0c0c0}.rank-3{color:#cd7f32}
+  .item-thumb{width:80px;height:80px;border-radius:12px;overflow:hidden;flex-shrink:0;background:#f0f0f0}
+  .item-thumb img{width:100%;height:100%;object-fit:cover}
+  .item-info{flex:1;min-width:0}
+  .item-brand{font-size:12px;color:#888;margin-bottom:3px}
+  .item-name{font-size:14px;font-weight:500;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:6px}
+  .item-price{font-size:18px;font-weight:900;color:#e94560}
+  .item-original-price{font-size:12px;color:#bbb;text-decoration:line-through;margin-left:6px}
+  .item-discount{font-size:13px;font-weight:700;color:#e94560;margin-right:4px}
+  .go-link{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:#f5f5f7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#888;transition:background .2s}
+  .item-card:hover .go-link{background:#e94560;color:#fff}
+  .platform-group{margin-bottom:24px}
+  .platform-group-title{font-size:16px;font-weight:700;margin-bottom:10px;padding-left:4px;display:flex;align-items:center;gap:8px}
+  .platform-group-title .dot{width:10px;height:10px;border-radius:50%}
+  .error-msg{background:#fff3cd;border:1px solid #ffc107;border-radius:12px;padding:16px;margin-bottom:16px;font-size:13px;color:#856404;text-align:center}
+  footer{text-align:center;padding:30px 20px;color:#aaa;font-size:12px;line-height:1.8}
+</style>
+</head>
+<body>
+<header>
+  <h1><span>REAL-TIME</span> TOP 3</h1>
+  <p>무신사 / 지그재그 인기 아이템</p>
+  <div id="updateTime"></div>
+</header>
+<div class="tab-bar">
+  <div class="tab active" data-tab="all">전체</div>
+  <div class="tab" data-tab="musinsa"><span class="dot" style="background:#000"></span>무신사</div>
+  <div class="tab" data-tab="zigzag"><span class="dot" style="background:#f0308a"></span>지그재그</div>
+</div>
+<div class="content" id="content"></div>
+<footer>패션 TOP3 &copy; 2026<br>데이터는 각 플랫폼 기준 인기 순위입니다</footer>
+<script>
+const DATA = {"updated_at": "2026-03-07 21:31:26", "platforms": {"musinsa": {"name": "무신사", "color": "#000000", "items": [{"rank": 1, "brand": "아디다스", "name": "클래식 트랙탑 - 블랙:화이트 / KD7969", "price": 79900, "discount": 24, "image": "https://image.msscdn.net/images/goods_img/20260108/5876943/5876943_17679250431717_500.jpg", "link": "https://www.musinsa.com/products/5876943"}, {"rank": 2, "brand": "나이키", "name": "에어 맥스 95 빅 버블 W - 화이트:에메랄드 그린:울프 그레이:코트 퍼플 / HJ5996-100", "price": 229000, "discount": 0, "image": "https://image.msscdn.net/images/goods_img/20251230/5861186/5861186_17676697549751_500.jpg", "link": "https://www.musinsa.com/products/5861186"}, {"rank": 3, "brand": "폴로 랄프 로렌", "name": "리미티드 에디션 빅 재킷-블랙", "price": 499000, "discount": 0, "image": "https://image.msscdn.net/images/goods_img/20260213/6024469/6024469_17719975348873_500.jpg", "link": "https://www.musinsa.com/products/6024469"}]}, "zigzag": {"name": "지그재그", "color": "#f0308a", "items": [{"rank": 1, "brand": "리얼코코", "name": "[단독] [얇은니트🌸/+뉴컬러/50만장돌파/made] 시오 니트", "price": 18900, "originalPrice": 34900, "discount": 67, "image": "https://cf.product-image.s.zigzag.kr/original/d/2026/2/27/200_202602271138420066_66131.gif", "link": "https://zigzag.kr/catalog/products/147921597"}, {"rank": 2, "brand": "모렌트", "name": "[mlt] 로이즈 베이직 라운드넥 가디건", "price": 26120, "originalPrice": 27500, "discount": 39, "image": "https://cf.product-image.s.zigzag.kr/original/d/2025/11/18/55187_202511181036280075_52858.gif", "link": "https://zigzag.kr/catalog/products/165294200"}, {"rank": 3, "brand": "파스텔타임", "name": "2026 뉴컬러 5추가/10만장 돌파🖤[MADE]탄탄 진청 세미 부츠컷 하이웨스트 pt(하객룩/데이트룩/데일리룩/소개팅룩)", "price": 37810, "originalPrice": 39800, "discount": 28, "image": "https://cf.product-image.s.zigzag.kr/original/d/2025/9/23/1039_202509232127200268_68639.gif", "link": "https://zigzag.kr/catalog/products/114744900"}]}}};
+
+let currentTab = 'all';
+
+function fmt(n) { return n.toLocaleString() + '원'; }
+
+function card(item, rank) {
+  const img = item.image || '';
+  const hasImg = img.startsWith('http');
+  const op = item.originalPrice || 0;
+  return `<a class="item-card" href="${item.link}" target="_blank" rel="noopener">
+    <div class="rank rank-${rank}">${rank}</div>
+    <div class="item-thumb">${hasImg ? `<img src="${img}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'">` : ''}</div>
+    <div class="item-info">
+      <div class="item-brand">${item.brand}</div>
+      <div class="item-name">${item.name}</div>
+      <div>${item.discount ? `<span class="item-discount">${item.discount}%</span>` : ''}<span class="item-price">${fmt(item.price)}</span>${op && op > item.price ? `<span class="item-original-price">${fmt(op)}</span>` : ''}</div>
+    </div>
+    <div class="go-link">&rarr;</div>
+  </a>`;
+}
+
+function render() {
+  const el = document.getElementById('content');
+  if (currentTab === 'all') {
+    let h = '';
+    for (const [k, p] of Object.entries(DATA.platforms)) {
+      if (!p.items || !p.items.length) continue;
+      h += `<div class="platform-group"><div class="platform-group-title"><span class="dot" style="background:${p.color}"></span>${p.name} TOP 3</div>${p.items.map((it, i) => card(it, i+1)).join('')}</div>`;
+    }
+    el.innerHTML = h;
+  } else {
+    const p = DATA.platforms[currentTab];
+    if (!p) { el.innerHTML = '<div class="error-msg">데이터 없음</div>'; return; }
+    let h = `<div class="platform-header"><div class="platform-logo" style="background:${p.color}">${p.name[0]}</div><h2>${p.name} TOP 3</h2><span class="badge">LIVE</span></div>`;
+    if (!p.items || !p.items.length) h += '<div class="error-msg">데이터를 가져올 수 없습니다.</div>';
+    else h += p.items.map((it, i) => card(it, i+1)).join('');
+    el.innerHTML = h;
+  }
+}
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    currentTab = t.dataset.tab;
+    render();
+  });
+});
+
+document.getElementById('updateTime').textContent = '업데이트: ' + DATA.updated_at;
+render();
+</script>
+</body>
+</html>
